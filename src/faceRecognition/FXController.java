@@ -32,6 +32,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -62,6 +63,14 @@ public class FXController
 	private CheckBox haarClassifier;
 	@FXML
 	private CheckBox lbpClassifier;
+	@FXML
+	private CheckBox newUser;
+	@FXML
+	private TextField newUserName;
+	@FXML
+	private Button newUserNameSubmit;
+	
+	
 	
 	// a timer for acquiring the video stream
 	private ScheduledExecutorService timer;
@@ -74,12 +83,17 @@ public class FXController
 	private CascadeClassifier faceCascade;
 	private int absoluteFaceSize;
 	
-	public int index = 316;
+	public int index = 0;
 	public int ind = 0;
+	
+	// New user Name for a training data
+	public String newname;
 	
 	// Names of the people from the training set
 	public HashMap<Integer, String> names = new HashMap<Integer, String>();
 	
+	// Random number of a training set
+	public int random = (int )(Math.random() * 50 + 3);
 	
 	/**
 	 * Init the controller, at start time
@@ -89,6 +103,10 @@ public class FXController
 		this.capture = new VideoCapture();
 		this.faceCascade = new CascadeClassifier();
 		this.absoluteFaceSize = 0;
+		
+		// disable 'new user' functionality
+		this.newUserNameSubmit.setDisable(true);
+		this.newUserName.setDisable(true);
 		// Takes some time thus use only when training set
 		// was updated 
 		trainModel();
@@ -112,6 +130,9 @@ public class FXController
 			// disable setting checkboxes
 			this.haarClassifier.setDisable(true);
 			this.lbpClassifier.setDisable(true);
+			
+			// disable 'New user' checkbox
+			this.newUser.setDisable(true);
 			
 			// start the video capture
 			this.capture.open(0);
@@ -153,6 +174,8 @@ public class FXController
 			// enable classifiers checkboxes
 			this.haarClassifier.setDisable(false);
 			this.lbpClassifier.setDisable(false);
+			// enable 'New user' checkbox
+			this.newUser.setDisable(false);
 			
 			// stop the timer
 			try
@@ -170,6 +193,10 @@ public class FXController
 			this.capture.release();
 			// clean the frame
 			this.originalFrame.setImage(null);
+			
+			// Clear the parameters for new user data collection
+			index = 0;
+			newname = "";
 		}
 	}
 	
@@ -255,13 +282,8 @@ public class FXController
 		        	String labnname = image.getName().split("\\_")[0];
 		        	String name = labnname.split("\\-")[1];
 		        	names.put(label, name);
-		        	// debug
-		        	//System.out.println("NAME IS: " + name);
-		        	//System.out.println("Photo: " + counter + " Label: " + label + " Path: " + image.getAbsolutePath());
 		        	// Add training set images to images Mat
 		        	images.add(img);
-		        	
-		        	// Imgcodecs.imwrite("IMG-to-train-on" + counter + ".png", img);
 		        	
 //		        	trainingImages.push_back(img);
 //		        	trainingLabels.add(label);
@@ -269,9 +291,6 @@ public class FXController
 		        	labels.put(counter, 0, label);
 		        	counter++;
 		        }
-		        
-//		        Integer[] array = trainingLabels.toArray(new Integer[trainingLabels.size()]);
-		        
 		        	FaceRecognizer faceRecognizer = Face.createFisherFaceRecognizer(0,1500);
 		        	faceRecognizer.train(images, labels);
 		        	faceRecognizer.save("traineddata");
@@ -358,7 +377,15 @@ public class FXController
 			Mat resizeImage = new Mat();
 			Size size = new Size(250,250);
 			Imgproc.resize(croppedImage, resizeImage, size);
-			// Imgcodecs.imwrite("resources/trainingset/igor/250x250/1-igor_" + (index++) + ".png", resizeImage);
+			
+			// check if 'New user' checkbox is selected
+			// if yes start collecting training data (50 images is enough)
+			if ((newUser.isSelected() && !newname.isEmpty())) {
+				if (index<50) {
+					Imgcodecs.imwrite("resources/trainingset/combined/" +
+					random + "-" + newname + "_" + (index++) + ".png", resizeImage);
+				}
+			}
 //			int prediction = faceRecognition(resizeImage);
 			double[] returnedResults = faceRecognition(resizeImage);
 			double prediction = returnedResults[0];
@@ -387,27 +414,17 @@ public class FXController
 	}
 
 	
-//	public void collectTrainingData() {
-//		//TODO finish the collector
-//		// Button to start collecting data automatically
-//		// each rectangle in faces is a face: draw them!
-//		Rect[] facesArray = faces.toArray(); 
-//		for (int i = 0; i < facesArray.length; i++) {
-//			Imgproc.rectangle(frame, facesArray[i].tl(), facesArray[i].br(), new Scalar(0, 255, 0), 3);
-//		// Crop the detected faces
-//		Rect rectCrop = new Rect(facesArray[i].tl(), facesArray[i].br());
-//		Mat croppedImage = new Mat(frame, rectCrop);
-//		// Resize the image to a default size
-//		Mat resizeImage = new Mat();
-//		Size size = new Size(250,250);
-//		Imgproc.resize(croppedImage, resizeImage, size);
-//		// Save the cropped screenshot of the detected face
-//		// Imgcodecs.imwrite("resources/trainingset/igor/250x250/1-igor_" + (index++) + ".png", resizeImage);
-//		// Imgcodecs.imwrite("resources/trainingset/richard/250x250/2-richard_" + (index++) + ".png", resizeImage);
-//					
-//	}
 
-
+	@FXML
+	protected void newUserNameSubmitted() {
+		if ((newUserName.getText() != null && !newUserName.getText().isEmpty())) {
+			newname = newUserName.getText();
+			//collectTrainingData(name);
+			System.out.println("BUTTON HAS BEEN PRESSED");
+			newUserName.clear();
+		}
+	}
+	
 
 	/**
 	 * The action triggered by selecting the Haar Classifier checkbox. It loads
@@ -435,6 +452,17 @@ public class FXController
 			this.haarClassifier.setSelected(false);
 			
 		this.checkboxSelection("resources/lbpcascades/lbpcascade_frontalface.xml");
+	}
+	
+	@FXML
+	protected void newUserSelected(Event event) {
+		if (this.newUser.isSelected()){
+			this.newUserNameSubmit.setDisable(false);
+			this.newUserName.setDisable(false);
+		} else {
+			this.newUserNameSubmit.setDisable(true);
+			this.newUserName.setDisable(true);
+		}
 	}
 	
 	/**
