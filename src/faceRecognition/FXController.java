@@ -109,7 +109,7 @@ public class FXController
 		this.newUserName.setDisable(true);
 		// Takes some time thus use only when training set
 		// was updated 
-		trainModel();
+		// trainModel();
 	}
 	
 
@@ -121,7 +121,7 @@ public class FXController
 	protected void startCamera()
 	{
 		// set a fixed width for the frame
-		originalFrame.setFitWidth(600);
+		// originalFrame.setFitWidth(600);
 		// preserve image ratio
 		originalFrame.setPreserveRatio(true);
 		
@@ -135,8 +135,12 @@ public class FXController
 			this.newUser.setDisable(true);
 			
 			// start the video capture
-			this.capture.open(0);
+			// built-in laptop cam
+			 this.capture.open(0);
+			// IP cam
+			// this.capture.open("http://192.168.1.158:8080/?action=stream.mjpg");
 			
+		
 			// is the video stream available?
 			if (this.capture.isOpened())
 			{
@@ -258,15 +262,8 @@ public class FXController
 		        List<Mat> images = new ArrayList<Mat>();
 		        
 		        System.out.println("THE NUMBER OF IMAGES READ IS: " + imageFiles.length);
-		        
-		        
-//		        Mat labels = new Mat(imageFiles.length, 1, CvType.CV_32SC1);
-//		        List<Integer> trainingLabels = new ArrayList<>();
-		        
-		        // test
-		        // Mat trainingImages = new Mat(0,250*250,CvType.CV_32SC1);
+
 		        Mat labels = new Mat(imageFiles.length,1,CvType.CV_32SC1);
-//		        List<Integer> trainingLabels = new ArrayList<>();
 		        
 		        int counter = 0;
 		        
@@ -285,9 +282,6 @@ public class FXController
 		        	// Add training set images to images Mat
 		        	images.add(img);
 		        	
-//		        	trainingImages.push_back(img);
-//		        	trainingLabels.add(label);
-//		        	labels[counter] = label;
 		        	labels.put(counter, 0, label);
 		        	counter++;
 		        }
@@ -306,25 +300,14 @@ public class FXController
 	
 	private double[] faceRecognition(Mat currentFace) {
 
-//		Imgproc.cvtColor(currentFace, currentFace, Imgproc.COLOR_BGR2GRAY);
-//		Imgproc.equalizeHist(currentFace, currentFace);
-		
-        	
-        	// predict the label
-        	
         	int[] predLabel = new int[1];
             double[] confidence = new double[1];
             int result = -1;
-            
-            
-            // Imgcodecs.imwrite("IMG-to-predict" + (ind++) + ".png", currentFace);
-//            FaceRecognizer faceRecognizer = Face.createFisherFaceRecognizer();
             // Create a face recognizer. We need to specify the threshold so that
             // unknown faces would return '-1' label
             FaceRecognizer faceRecognizer = Face.createFisherFaceRecognizer(0,1500);
             faceRecognizer.load("traineddata");
         	faceRecognizer.predict(currentFace,predLabel,confidence);
-//        	result = faceRecognizer.predict_label(currentFace);
         	result = predLabel[0];
         	
         	return new double[] {result,confidence[0]};
@@ -366,6 +349,9 @@ public class FXController
 		for (int i = 0; i < facesArray.length; i++) {
 			Imgproc.rectangle(frame, facesArray[i].tl(), facesArray[i].br(), new Scalar(0, 255, 0), 3);
 
+			// Face Recognition part below
+			//
+			//
 			// Crop the detected faces
 			Rect rectCrop = new Rect(facesArray[i].tl(), facesArray[i].br());
 			Mat croppedImage = new Mat(frame, rectCrop);
@@ -386,12 +372,10 @@ public class FXController
 					random + "-" + newname + "_" + (index++) + ".png", resizeImage);
 				}
 			}
-//			int prediction = faceRecognition(resizeImage);
 			double[] returnedResults = faceRecognition(resizeImage);
 			double prediction = returnedResults[0];
 			double confidence = returnedResults[1];
 			
-//			System.out.println("PREDICTED LABEL IS: " + prediction);
 			int label = (int) prediction;
 			String name = "";
 			if (names.containsKey(label)) {
@@ -401,7 +385,6 @@ public class FXController
 			}
 			
 			// Create the text we will annotate the box with:
-//            String box_text = "Prediction = " + prediction + " Confidence = " + confidence;
             String box_text = "Prediction = " + name + " Confidence = " + confidence;
             // Calculate the position for annotated text (make sure we don't
             // put illegal values in there):
@@ -419,8 +402,6 @@ public class FXController
 	protected void newUserNameSubmitted() {
 		if ((newUserName.getText() != null && !newUserName.getText().isEmpty())) {
 			newname = newUserName.getText();
-			//collectTrainingData(name);
-			System.out.println("BUTTON HAS BEEN PRESSED");
 			newUserName.clear();
 		}
 	}
