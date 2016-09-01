@@ -21,6 +21,9 @@ Application requires a training set of images to train the face recognition. The
 ###### Possible issues
 Face recognition is sensitive to lightning in the room so it's recommended to use the training set of images taken not from one point. For example, just by holding your laptop in your hand and turning around with it while collecting the training set gives pretty good results. 
 
+The opencv jar file used in this project might not work on your architecture (mostly likely will not). You will need to compile it on the system you're going to run face recognition code at. This is not difficult and I've wrote a simple step-by-step instructions for this purpose. Refer to https://github.com/heroinsoul/ImageProcessing/commit/0f481d4bb526fbbf5ce2f39e7a03f6262cfd1e76#commitcomment-18412442
+
+
 ###### Related info
 - [Introduction to Java Development with OpenCV] (http://docs.opencv.org/2.4/doc/tutorials/introduction/desktop_java/java_dev_intro.html)
 - [Face Recognition in Videos with OpenCV] (http://docs.opencv.org/2.4/modules/contrib/doc/facerec/tutorial/facerec_video_recognition.html)
