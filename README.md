@@ -8,11 +8,11 @@ Image Processing using OpenCV:
 
 ## Face Detection and Recognition
 
-Done entirely with [OpenCV] (https://github.com/opencv/opencv) with additional Face module from [OpenCV-contrib] (https://github.com/opencv/opencv_contrib) repository.
+Done entirely with [OpenCV](https://github.com/opencv/opencv) with additional Face module from [OpenCV-contrib](https://github.com/opencv/opencv_contrib) repository.
 
-I've reused some [code] (https://github.com/opencv-java) and followed the [tutorials] (http://opencv-java-tutorials.readthedocs.io/en/latest/index.html) provided by [Luigi De Russis] (https://github.com/luigidr). Other relevant sources are mentioned below.
+I've reused some [code](https://github.com/opencv-java) and followed the [tutorials](http://opencv-java-tutorials.readthedocs.io/en/latest/index.html) provided by [Luigi De Russis](https://github.com/luigidr). Other relevant sources are mentioned below.
 
-The main problem of all the face recognition tutorials or code samples I've found is that they were all based on OpenCV version 2.4 or used external libraries like [JavaCV] (https://github.com/bytedeco/javacv). My code is based on the latest version of OpenCV 3.1.0. In this version some of the methods are different from the previous versions, for instance method MatVector is not available anymore (and most of the code samples I've found depended on it). I also didn't want to use external libraries to keep it clean and neat. 
+The main problem of all the face recognition tutorials or code samples I've found is that they were all based on OpenCV version 2.4 or used external libraries like [JavaCV](https://github.com/bytedeco/javacv). My code is based on the latest version of OpenCV 3.1.0. In this version some of the methods are different from the previous versions, for instance method MatVector is not available anymore (and most of the code samples I've found depended on it). I also didn't want to use external libraries to keep it clean and neat. 
 
 ###### Usage
 
@@ -21,10 +21,10 @@ Application requires a training set of images to train the face recognition. The
 ###### Possible issues
 Face recognition is sensitive to lightning in the room so it's recommended to use the training set of images taken not from one point. For example, just by holding your laptop in your hand and turning around with it while collecting the training set gives pretty good results. 
 
-The opencv jar file used in this project might not work on your architecture (mostly likely will not). You will need to compile it on the system you're going to run face recognition code at. This is not difficult and I've wrote a simple step-by-step instructions for this purpose. Refer to https://github.com/heroinsoul/ImageProcessing/commit/0f481d4bb526fbbf5ce2f39e7a03f6262cfd1e76#commitcomment-18412442
+The opencv jar file used in this project might not work on your architecture (mostly likely will not). You will need to compile it on the system you're going to run face recognition code at. This is not difficult and I've wrote a simple step-by-step instructions for this purpose. Refer to https://github.com/zavalyshyn/ImageProcessing/commit/0f481d4bb526fbbf5ce2f39e7a03f6262cfd1e76#commitcomment-18412442
 
 
 ###### Related info
-- [Introduction to Java Development with OpenCV] (http://docs.opencv.org/2.4/doc/tutorials/introduction/desktop_java/java_dev_intro.html)
-- [Face Recognition in Videos with OpenCV] (http://docs.opencv.org/2.4/modules/contrib/doc/facerec/tutorial/facerec_video_recognition.html)
-- [JavaCV samples] (https://github.com/bytedeco/javacv/tree/master/samples)
+- [Introduction to Java Development with OpenCV](http://docs.opencv.org/2.4/doc/tutorials/introduction/desktop_java/java_dev_intro.html)
+- [Face Recognition in Videos with OpenCV](http://docs.opencv.org/2.4/modules/contrib/doc/facerec/tutorial/facerec_video_recognition.html)
+- [JavaCV samples](https://github.com/bytedeco/javacv/tree/master/samples)
